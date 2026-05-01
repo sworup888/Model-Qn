@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Study Portal</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fc;
+            --card-bg: #ffffff;
+            --text-main: #2d3436;
+            --accent-green: #5bb473;
+            --category-bg: #f1f3f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 300px;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .category-grid { display: grid; gap: 10px; }
+
+        .cat-item {
+            background: var(--category-bg);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .cat-item:hover { background: #e9ecef; }
+        .cat-item.active { border: 2px solid #6c5ce7; background: #fff; }
+
+        /* Main Content area */
+        .content-area {
+            flex-grow: 1;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .subjects-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .subjects-table td {
+            border: 1px solid #ddd;
+            padding: 15px;
+        }
+
+        .btn-action {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #6c5ce7;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="sidebar">
+        <h2>Categories</h2>
+        <div class="category-grid">
+            <div class="cat-item" onclick="showSubjects('Class 10')">Class 10</div>
+            <div class="cat-item" onclick="showSubjects('Class 12')">Class 12</div>
+            <div class="cat-item" onclick="showSubjects('BBS')">BBS</div>
+        </div>
+    </div>
+
+    <div class="content-area">
+        <div id="view-subjects">
+            <h2 id="cat-title">Select a Category</h2>
+            <table class="subjects-table"><tbody id="subject-list"></tbody></table>
+        </div>
+
+        <div id="view-years" class="hidden">
+            <div class="back-btn" onclick="goBackToSubjects()">← Back to Subjects</div>
+            <h2 id="subject-title">Subject Questions</h2>
+            <table class="subjects-table">
+                <thead>
+                    <tr style="background: #f1f3f5;">
+                        <td>Year</td>
+                        <td>Download Link</td>
+                    </tr>
+                </thead>
+                <tbody id="year-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // DATA STRUCTURE
+    const portalData = {
+        'Class 10': ['Mathematics', 'Science', 'English'],
+        'Class 12': ['Physics', 'Chemistry', 'English'],
+        'BBS': ['Accountancy', 'Economics']
+    };
+
+    let currentCategory = "";
+
+    function showSubjects(cat) {
+        currentCategory = cat;
+        document.getElementById('view-years').classList.add('hidden');
+        document.getElementById('view-subjects').classList.remove('hidden');
+        document.getElementById('cat-title').innerText = cat;
+        
+        const list = document.getElementById('subject-list');
+        list.innerHTML = "";
+        
+        portalData[cat].forEach(sub => {
+            list.innerHTML += `<tr>
+                <td>${sub}</td>
+                <td><span class="btn-action" onclick="showYears('${sub}')">View Questions →</span></td>
+            </tr>`;
+        });
+    }
+
+    function showYears(subName) {
+        document.getElementById('view-subjects').classList.add('hidden');
+        document.getElementById('view-years').classList.remove('hidden');
+        document.getElementById('subject-title').innerText = subName + " (Past 5 Years)";
+        
+        const yearList = document.getElementById('year-list');
+        yearList.innerHTML = "";
+
+        // Generating 5 years (Adjust years as needed)
+        const years = ['2081', '2080', '2079', '2078', '2077'];
+        
+        years.forEach(year => {
+            yearList.innerHTML += `<tr>
+                <td>Question Paper ${year}</td>
+                <td><a href="#" class="btn-action" target="_blank">Open Drive Portal</a></td>
+            </tr>`;
+        });
+    }
+
+    function goBackToSubjects() {
+        showSubjects(currentCategory);
+    }
+</script>
+
+</body>
+</html>
