@@ -1,0 +1,203 @@
+<index html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Portal</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fc;
+            --card-bg: #ffffff;
+            --text-main: #2d3436;
+            --accent-green: #5bb473;
+            --category-bg: #f1f3f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 50px 20px;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* --- Left Side: Categories Card --- */
+        .sidebar {
+            width: 350px;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .cat-item {
+            background: var(--category-bg);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .cat-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .cat-item.active {
+            border-color: #6c5ce7;
+            background: #fff;
+        }
+
+        .cat-name { font-weight: 600; color: #4b5563; }
+        .cat-count { color: #9ca3af; font-size: 14px; }
+
+        /* --- Right Side: Subjects Table --- */
+        .content-area {
+            flex-grow: 1;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .content-area h2 { margin-top: 0; margin-bottom: 20px; }
+
+        .subjects-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .subjects-table td {
+            border: 1px solid #ddd;
+            padding: 15px 20px;
+        }
+
+        .drive-link {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .drive-link:hover { text-decoration: underline; }
+
+        /* Hide table by default until a category is clicked */
+        #table-placeholder { color: #999; text-align: center; padding: 40px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <!-- Sidebar inspired by your Categories image -->
+    <div class="sidebar">
+        <h2>Categories</h2>
+        <div class="category-grid">
+            <div class="cat-item" onclick="showCategory('Class 10')">
+                <span class="cat-name">Class 10</span>
+                <span class="cat-count">12 🔖</span>
+            </div>
+            <div class="cat-item" onclick="showCategory('Class 12')">
+                <span class="cat-name">Class 12</span>
+                <span class="cat-count">08 🔖</span>
+            </div>
+            <div class="cat-item" onclick="showCategory('BBS')">
+                <span class="cat-name">BBS</span>
+                <span class="cat-count">05 🔖</span>
+            </div>
+            <div class="cat-item" onclick="showCategory('Books')">
+                <span class="cat-name">Books</span>
+                <span class="cat-count">20 🔖</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area inspired by image_82a5a5.png -->
+    <div class="content-area">
+        <h2 id="current-category">Select a Category</h2>
+        
+        <div id="table-placeholder">Click a category on the left to view available books/PDFs.</div>
+
+        <table class="subjects-table hidden" id="main-table">
+            <tbody id="table-body">
+                <!-- Content will be injected here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    // This data stores your links for each category
+    const data = {
+        'Class 10': [
+            { sub: 'Mathematics', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' },
+            { sub: 'Science', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' }
+        ],
+        'Class 12': [
+            { sub: 'English', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' },
+            { sub: 'Accountancy', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' }
+        ],
+        'BBS': [
+            { sub: 'Economics', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' },
+            { sub: 'Business Math', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' }
+        ],
+        'Books': [
+            { sub: 'Fiction Novels', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' },
+            { sub: 'Tech Journals', link: 'https://media.edusanjal.com/u/grade-10-science-and-technology-part-i.pdf' }
+        ]
+    };
+
+    function showCategory(catName) {
+        // 1. Update Heading
+        document.getElementById('current-category').innerText = catName + " Subjects";
+        
+        // 2. Show Table, Hide Placeholder
+        document.getElementById('main-table').classList.remove('hidden');
+        document.getElementById('table-placeholder').classList.add('hidden');
+
+        // 3. Clear and Fill Table
+        const tbody = document.getElementById('table-body');
+        tbody.innerHTML = ''; // Clear old rows
+
+        data[catName].forEach(item => {
+            const row = `<tr>
+                <td>${item.sub}</td>
+                <td><a href="${item.link}" class="drive-link" target="_blank">Open Drive Portal</a></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        // 4. Visual Selection Highlight
+        document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
